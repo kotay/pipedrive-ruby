@@ -104,7 +104,7 @@ module Pipedrive
         res = get "/searchResults", :query => { :term => term }.merge(opts)
         if res.ok?
           people = new_list(res).select{|d| d.is_a?(Pipedrive::Person)}
-          if person.any?
+          if people.any?
             Pipedrive::Person.find(people.first.id)
           else
             Pipedrive::Person.new

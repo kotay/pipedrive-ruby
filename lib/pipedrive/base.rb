@@ -100,6 +100,20 @@ module Pipedrive
         res.ok? ? new_list(res) : bad_response(res)
       end
 
+      def search_for_person(term, opts={})
+        res = get "/searchResults", :query => { :term => term }.merge(opts)
+        if res.ok?
+          people = new_list(res).select{|d| d.is_a?(Pipedrive::Person)}
+          if person.any?
+            Pipedrive::Person.find(people.first.id)
+          else
+            Pipedrive::Person.new
+          end
+        else
+          bad_response(res)
+        end
+      end
+
       def resource_path
         klass = name.split('::').last
         klass.eql?('Activity') ? '/activities' : "/#{klass.downcase}s"
